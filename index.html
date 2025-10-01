@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator</title>
+    <title>Interaktivni Kalkulator Izvedljivosti | Dvorana za Agility</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +23,7 @@
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8f7f4; color: #4a4a4a; scroll-behavior: smooth; }
-        .card { background-color: #ffffff; border-radius: 0.75rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 2rem; transition: all 0.3s ease; }
+        .card { background-color: #ffffff; border-radius: 0.75rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 2rem; }
         .stat-card { background-color: #f0f0f0; border-radius: 0.75rem; padding: 1.5rem; text-align: center; }
         .nav-link { transition: color 0.3s ease; padding-bottom: 4px; }
         .nav-link.active { color: #3b82f6; font-weight: 600; border-bottom: 2px solid #3b82f6; }
@@ -31,162 +31,191 @@
         .slider { -webkit-appearance: none; width: 100%; height: 8px; border-radius: 5px; background: #ddd; outline: none; opacity: 0.7; transition: opacity .2s; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; cursor: pointer; }
         .slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; cursor: pointer; }
-        .chart-container { position: relative; width: 100%; max-width: 500px; margin: auto; height: 300px; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin: auto; height: 350px; }
         .dynamic-input { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 0.375rem; }
-        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .model-btn { padding: 0.5rem 1rem; border: 1px solid #ccc; border-radius: 0.375rem; transition: all 0.2s ease; }
+        .model-btn.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        @media (min-width: 1024px) {
+            .sidebar { max-height: calc(100vh - 8rem); }
+        }
     </style>
 </head>
 <body class="antialiased">
 
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-gray-800">Agility</h1>
-            <div class="hidden md:flex space-x-8">
-                <a href="#finance" class="nav-link text-gray-600 hover:text-blue-500">Kalkulator</a>
-            </div>
+            <h1 class="text-xl font-bold text-gray-800">Dvorana za Agility</h1>
         </nav>
     </header>
 
     <main class="container mx-auto px-6 py-12">
-        <section class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Interaktivni Kalkulatorček</h2>
-        </section>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            
+            <!-- LEFT COLUMN (INPUTS) -->
+            <div class="lg:col-span-2">
+                <div class="lg:sticky lg:top-24 card">
+                    <h3 class="text-3xl font-bold text-gray-800 mb-2 text-center">Finančni Simulator</h3>
+                    
+                    <div class="sidebar overflow-y-auto pr-2">
+                        <div class="flex justify-center space-x-4 mb-6">
+                            <button id="btnMembership" class="model-btn active">Model s Članstvom</button>
+                            <button id="btnPackages" class="model-btn">Model s Paketi</button>
+                        </div>
 
-        <section class="grid md:grid-cols-3 gap-8 mb-16">
-            <div class="stat-card">
-                <h3 class="text-lg font-semibold text-gray-700">Ocenjen Letni Dobiček (1. leto)</h3>
-                <p id="annual-profit" class="text-4xl font-bold text-blue-600 mt-2">€0</p>
-            </div>
-            <div class="stat-card">
-                <h3 class="text-lg font-semibold text-gray-700">Donosnost Naložbe (ROI, 1. leto)</h3>
-                <p id="roi" class="text-4xl font-bold text-green-600 mt-2">0.0%</p>
-            </div>
-            <div class="stat-card">
-                <h3 class="text-lg font-semibold text-gray-700">Začetna Investicija (1. faza)</h3>
-                <p id="total-investment" class="text-4xl font-bold text-gray-800 mt-2">€0</p>
-            </div>
-        </section>
-
-        <section id="finance" class="card mb-16">
-            <div class="bg-gray-50 p-6 rounded-lg">
-                <h4 class="text-xl font-semibold text-center mb-6">Prilagodi Predpostavke</h4>
-                <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-6">
-                    <div>
-                        <h5 class="font-bold mb-3 text-center text-gray-700">Scenarij</h5>
-                        <div class="space-y-4">
-                             <div><label for="annualMembers" class="block mb-1 slider-label">Št. letnih članov (<span id="annualMembersValue">10</span>)</label><input type="range" min="0" max="100" value="10" class="slider dynamic-slider" id="annualMembers"></div>
-                             <div><label for="highSeasonHours" class="block mb-1 slider-label">Skupne ure/teden (Visoka sezona, <span id="highSeasonHoursValue">30</span>h)</label><input type="range" min="5" max="60" value="30" class="slider dynamic-slider" id="highSeasonHours"></div>
-                             <div><label for="lowSeasonHours" class="block mb-1 slider-label">Skupne ure/teden (Nizka sezona, <span id="lowSeasonHoursValue">20</span>h)</label><input type="range" min="5" max="40" value="20" class="slider dynamic-slider" id="lowSeasonHours"></div>
-                             <div><label for="memberRatio" class="block mb-1 slider-label">Razmerje ur: Člani vs. Nečlani (<span id="memberRatioValue">75</span>%)</label><input type="range" min="0" max="100" value="75" class="slider dynamic-slider" id="memberRatio"></div>
-                             <div><label for="hourRatio" class="block mb-1 slider-label">Razmerje najemov: 1h vs. 30min (<span id="hourRatioValue">75</span>%)</label><input type="range" min="0" max="100" value="75" class="slider dynamic-slider" id="hourRatio"></div>
-                        </div>
-                    </div>
-                     <div>
-                        <h5 class="font-bold mb-3 text-center text-gray-700">Premium Članstvo</h5>
-                        <div class="flex items-center justify-center mb-3">
-                            <input type="checkbox" id="enablePremium" class="dynamic-checkbox h-4 w-4 rounded" checked>
-                            <label for="enablePremium" class="ml-2 input-label font-bold">Aktiviraj Premium</label>
-                        </div>
-                        <div id="premiumControlsContainer" class="space-y-4 transition-opacity duration-300">
-                             <div><label for="premiumMembersHigh" class="block mb-1 slider-label">Št. premium (Visoka sezona, <span id="premiumMembersHighValue">5</span>)</label><input type="range" min="0" max="50" value="5" class="slider dynamic-slider" id="premiumMembersHigh"></div>
-                             <div><label for="premiumMembersLow" class="block mb-1 slider-label">Št. premium (Nizka sezona, <span id="premiumMembersLowValue">2</span>)</label><input type="range" min="0" max="50" value="2" class="slider dynamic-slider" id="premiumMembersLow"></div>
-                             <div><label for="premiumFee" class="input-label">Mesečna članarina (€)</label><input type="number" id="premiumFee" value="60" class="dynamic-input"></div>
-                             <div><label for="avgFreeHours" class="block mb-1 slider-label">Povp. brezplačne ure/teden (<span id="avgFreeHoursValue">2.5</span>h)</label><input type="range" min="0" max="5" value="2.5" step="0.5" class="slider dynamic-slider" id="avgFreeHours"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h5 class="font-bold mb-3 text-center text-gray-700">Cenik (€)</h5>
-                        <div class="space-y-2">
-                            <div><label for="annualFee" class="input-label">Letna članarina</label><input type="number" id="annualFee" value="150" class="dynamic-input"></div>
-                            <div><label for="memberRate" class="input-label">Cena/uro (Člani)</label><input type="number" id="memberRate" value="30" class="dynamic-input"></div>
-                            <div><label for="memberRateHalf" class="input-label">Cena/30min (Člani)</label><input type="number" id="memberRateHalf" value="20" class="dynamic-input"></div>
-                            <div><label for="nonMemberRate" class="input-label">Cena/uro (Nečlani)</label><input type="number" id="nonMemberRate" value="40" class="dynamic-input"></div>
-                            <div><label for="nonMemberRateHalf" class="input-label">Cena/30min (Nečlani)</label><input type="number" id="nonMemberRateHalf" value="30" class="dynamic-input"></div>
-                        </div>
-                    </div>
-                    <div>
-                         <h5 class="font-bold mb-3 text-center text-gray-700">Začetni Stroški (€) - 1. Faza</h5>
-                        <div class="space-y-2" id="staticStartupCosts">
-                           <div><label for="domeCost" class="input-label">Balon</label><input type="number" id="domeCost" value="136000" class="dynamic-input"></div>
-                           <div><label for="turfCost" class="input-label">Umetna Trava</label><input type="number" id="turfCost" value="25000" class="dynamic-input"></div>
-                           <div><label for="sitePrepCost" class="input-label">Priprava terena</label><input type="number" id="sitePrepCost" value="10000" class="dynamic-input"></div>
-                           <div><label for="techCost" class="input-label">Osnovna Tehnologija</label><input type="number" id="techCost" value="3000" class="dynamic-input"></div>
-                           <div><label for="permitsCost" class="input-label">Dovoljenja</label><input type="number" id="permitsCost" value="5000" class="dynamic-input"></div>
-                        </div>
-                        <div id="dynamicStartupCostsContainer" class="space-y-2 mt-2"></div>
-                        <button id="addStartupCostBtn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 w-full text-left">+ Dodaj nov strošek</button>
-                         <div class="mt-4 border-t pt-4">
-                            <h6 class="font-semibold text-gray-600 text-sm">Načrtovani Stroški (2. Faza)</h6>
-                            <div class="space-y-2 mt-2">
-                                <div><label class="input-label text-gray-500">Nadgradnja kamer (4K sistem)</label><input type="number" value="3000" class="dynamic-input bg-gray-200" disabled></div>
-                                <div><label class="input-label text-gray-500">WC kontejner</label><input type="number" value="5000" class="dynamic-input bg-gray-200" disabled></div>
+                        <div id="membershipModelControls">
+                            <div class="space-y-6">
+                                <div>
+                                    <h5 class="font-bold mb-3 text-center text-gray-700">Scenarij Uporabe</h5>
+                                    <div class="space-y-4">
+                                        <div><label for="annualMembers" class="block mb-1 slider-label">Št. letnih članov (<span id="annualMembersValue">10</span>)</label><input type="range" min="0" max="100" value="10" class="slider dynamic-slider" id="annualMembers"></div>
+                                        <div><label for="highSeasonHours" class="block mb-1 slider-label">Skupne ure/teden (Visoka sezona, <span id="highSeasonHoursValue">30</span>h)</label><input type="range" min="5" max="60" value="30" class="slider dynamic-slider" id="highSeasonHours"></div>
+                                        <div><label for="lowSeasonHours" class="block mb-1 slider-label">Skupne ure/teden (Nizka sezona, <span id="lowSeasonHoursValue">20</span>h)</label><input type="range" min="5" max="40" value="20" class="slider dynamic-slider" id="lowSeasonHours"></div>
+                                        <div><label for="memberRatio" class="flex items-center mb-1 slider-label">Razmerje ur: Člani vs. Nečlani (<span id="memberRatioValue">75</span>%)</label><input type="range" min="0" max="100" value="75" class="slider dynamic-slider" id="memberRatio"></div>
+                                        <div><label for="hourRatio" class="flex items-center mb-1 slider-label">Razmerje najemov: 1h vs. 30min (<span id="hourRatioValue">75</span>%)</label><input type="range" min="0" max="100" value="75" class="slider dynamic-slider" id="hourRatio"></div>
+                                    </div>
+                                </div>
+                                 <div>
+                                    <h5 class="font-bold text-center text-gray-700">Premium Članstvo</h5>
+                                    <div class="flex items-center justify-center my-3"><input type="checkbox" id="enablePremium" class="dynamic-checkbox h-4 w-4 rounded" checked><label for="enablePremium" class="ml-2 input-label font-bold">Aktiviraj Premium</label></div>
+                                    <div id="premiumControlsContainer" class="space-y-4 transition-opacity duration-300">
+                                         <div><label for="premiumMembersHigh" class="block mb-1 slider-label">Št. premium (Visoka sezona, <span id="premiumMembersHighValue">5</span>)</label><input type="range" min="0" max="50" value="5" class="slider dynamic-slider" id="premiumMembersHigh"></div>
+                                         <div><label for="premiumMembersLow" class="block mb-1 slider-label">Št. premium (Nizka sezona, <span id="premiumMembersLowValue">2</span>)</label><input type="range" min="0" max="50" value="2" class="slider dynamic-slider" id="premiumMembersLow"></div>
+                                         <div><label for="premiumFee" class="input-label">Mesečna članarina (€)</label><input type="number" id="premiumFee" value="60" class="dynamic-input"></div>
+                                         <div><label for="avgFreeHours" class="block mb-1 slider-label">Povp. brezplačne ure/teden (<span id="avgFreeHoursValue">2.5</span>h)</label><input type="range" min="0" max="5" value="2.5" step="0.5" class="slider dynamic-slider" id="avgFreeHours"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold mb-3 text-center text-gray-700">Cenik (€)</h5>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div><label for="annualFee" class="input-label">Letna članarina</label><input type="number" id="annualFee" value="150" class="dynamic-input"></div>
+                                        <div></div>
+                                        <div><label for="memberRate" class="input-label">Cena/uro (Člani)</label><input type="number" id="memberRate" value="30" class="dynamic-input"></div>
+                                        <div><label for="memberRateHalf" class="input-label">Cena/30min (Člani)</label><input type="number" id="memberRateHalf" value="20" class="dynamic-input"></div>
+                                        <div><label for="nonMemberRate" class="input-label">Cena/uro (Nečlani)</label><input type="number" id="nonMemberRate" value="40" class="dynamic-input"></div>
+                                        <div><label for="nonMemberRateHalf" class="input-label">Cena/30min (Nečlani)</label><input type="number" id="nonMemberRateHalf" value="30" class="dynamic-input"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div>
-                         <h5 class="font-bold mb-3 text-center text-gray-700">Mesečni Stroški (€)</h5>
-                        <div class="space-y-2" id="staticMonthlyCosts">
-                           <div><label for="electricityCost" class="input-label">Elektrika</label><input type="number" id="electricityCost" value="1800" class="dynamic-input"></div>
-                           <div><label for="insuranceCost" class="input-label">Zavarovanje</label><input type="number" id="insuranceCost" value="300" class="dynamic-input"></div>
-                           <div><label for="maintenanceCost" class="input-label">Vzdrževanje</label><input type="number" id="maintenanceCost" value="400" class="dynamic-input"></div>
-                           <div><label for="softwareCost" class="input-label">Programska oprema</label><input type="number" id="softwareCost" value="200" class="dynamic-input"></div>
-                        </div>
-                        <div id="dynamicMonthlyCostsContainer" class="space-y-2 mt-2"></div>
-                        <button id="addMonthlyCostBtn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 w-full text-left">+ Dodaj nov strošek</button>
-                        <div class="mt-4 border-t pt-4">
-                             <div class="flex items-center">
-                                <input type="checkbox" id="enableRent" class="dynamic-checkbox h-4 w-4 rounded">
-                                <label for="enableRent" class="ml-2 input-label font-bold">Vključi Najemnino</label>
+
+                        <div id="packagesModelControls" class="hidden">
+                             <div class="space-y-6">
+                                <div>
+                                    <h5 class="font-bold mb-3 text-center text-gray-700">Scenarij Uporabe (Paketi)</h5>
+                                    <div class="space-y-4">
+                                        <div><label for="packHighSeasonHours" class="block mb-1 slider-label">Skupne plačane ure/teden (Visoka sezona, <span id="packHighSeasonHoursValue">30</span>h)</label><input type="range" min="5" max="60" value="30" class="slider dynamic-slider" id="packHighSeasonHours"></div>
+                                        <div><label for="packLowSeasonHours" class="block mb-1 slider-label">Skupne plačane ure/teden (Nizka sezona, <span id="packLowSeasonHoursValue">20</span>h)</label><input type="range" min="5" max="40" value="20" class="slider dynamic-slider" id="packLowSeasonHours"></div>
+                                        <div><label for="packRatio" class="block mb-1 slider-label">Delež ur, prodanih v paketih (<span id="packRatioValue">50</span>%)</label><input type="range" min="0" max="100" value="50" class="slider dynamic-slider" id="packRatio"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold mb-3 text-center text-gray-700">Cenik Paketov (€)</h5>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div><label for="pack10HourPrice" class="input-label">Cena - Paket 10 ur</label><input type="number" id="pack10HourPrice" value="270" class="dynamic-input"></div>
+                                        <div><label for="pack10HalfHourPrice" class="input-label">Cena - Paket 10 x 30min</label><input type="number" id="pack10HalfHourPrice" value="180" class="dynamic-input"></div>
+                                    </div>
+                                    <h5 class="font-bold mt-4 mb-3 text-center text-gray-700">Posamični Termini (€)</h5>
+                                     <div class="grid grid-cols-2 gap-4">
+                                        <div><label for="packSingleHourPrice" class="input-label">Cena/uro (posamično)</label><input type="number" id="packSingleHourPrice" value="40" class="dynamic-input"></div>
+                                        <div><label for="packSingleHalfHourPrice" class="input-label">Cena/30min (posamično)</label><input type="number" id="packSingleHalfHourPrice" value="30" class="dynamic-input"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div id="rentControlsContainer" class="mt-2 transition-opacity duration-300">
-                                 <label for="rentCost" class="input-label">Mesečna najemnina (€)</label>
-                                <input type="number" id="rentCost" value="1000" class="dynamic-input">
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-x-8 gap-y-6 mt-6 pt-6 border-t">
+                            <div>
+                                 <h5 class="font-bold mb-3 text-center text-gray-700">Začetni Stroški (€) - 1. Faza</h5>
+                                <div class="space-y-2" id="staticStartupCosts">
+                                   <div><label for="domeCost" class="input-label">Dvorana</label><input type="number" id="domeCost" value="100000" class="dynamic-input common-input"></div>
+                                   <div><label for="turfCost" class="input-label">Umetna Trava</label><input type="number" id="turfCost" value="25000" class="dynamic-input common-input"></div>
+                                   <div><label for="sitePrepCost" class="input-label">Priprava terena</label><input type="number" id="sitePrepCost" value="10000" class="dynamic-input common-input"></div>
+                                   <div><label for="techCost" class="input-label">Osnovna Tehnologija</label><input type="number" id="techCost" value="3000" class="dynamic-input common-input"></div>
+                                   <div><label for="permitsCost" class="input-label">Dovoljenja/papirologija</label><input type="number" id="permitsCost" value="5000" class="dynamic-input common-input"></div>
+                                </div>
+                                <div id="dynamicStartupCostsContainer" class="space-y-2 mt-2"></div>
+                                <button id="addStartupCostBtn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 w-full text-left">+ Dodaj nov strošek</button>
+                                 <div class="mt-4 border-t pt-4">
+                                    <h6 class="font-semibold text-gray-600 text-sm">Načrtovani Stroški (2. Faza)</h6>
+                                    <div class="space-y-2 mt-2">
+                                        <div><label class="input-label text-gray-500">Nadgradnja kamer</label><input type="number" value="3000" class="dynamic-input bg-gray-200" disabled></div>
+                                        <div><label class="input-label text-gray-500">Sanitarni kontejner</label><input type="number" value="5000" class="dynamic-input bg-gray-200" disabled></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                 <h5 class="font-bold mb-3 text-center text-gray-700">Mesečni Stroški (€)</h5>
+                                <div class="space-y-2" id="staticMonthlyCosts">
+                                   <div><label for="electricityCost" class="input-label">Elektrika</label><input type="number" id="electricityCost" value="1800" class="dynamic-input common-input"></div>
+                                   <div><label for="insuranceCost" class="input-label">Zavarovanje</label><input type="number" id="insuranceCost" value="300" class="dynamic-input common-input"></div>
+                                   <div><label for="maintenanceCost" class="input-label">Vzdrževanje</label><input type="number" id="maintenanceCost" value="400" class="dynamic-input common-input"></div>
+                                   <div><label for="softwareCost" class="input-label">Programska oprema</label><input type="number" id="softwareCost" value="200" class="dynamic-input common-input"></div>
+                                </div>
+                                <div id="dynamicMonthlyCostsContainer" class="space-y-2 mt-2"></div>
+                                <button id="addMonthlyCostBtn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 w-full text-left">+ Dodaj nov strošek</button>
+                                <div class="mt-4 border-t pt-4">
+                                     <div class="flex items-center">
+                                        <input type="checkbox" id="enableRent" class="dynamic-checkbox common-input h-4 w-4 rounded">
+                                        <label for="enableRent" class="ml-2 input-label font-bold">Vključi Najemnino</label>
+                                    </div>
+                                    <div id="rentControlsContainer" class="mt-2 transition-opacity duration-300">
+                                         <label for="rentCost" class="input-label">Mesečna najemnina (€)</label>
+                                        <input type="number" id="rentCost" value="1000" class="dynamic-input common-input">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-12 mt-12">
-                <div>
-                    <h4 class="text-xl font-semibold mb-4 text-center">Sezona</h4>
+            <!-- RIGHT COLUMN (OUTPUTS) -->
+            <div class="lg:col-span-3 space-y-8">
+                <section class="grid md:grid-cols-3 gap-8">
+                    <div class="stat-card md:col-span-1">
+                        <h3 class="text-lg font-semibold text-gray-700">Letni Dobiček</h3>
+                        <p id="annual-profit-right" class="text-4xl font-bold text-blue-600 mt-2">€0</p>
+                    </div>
+                    <div class="stat-card md:col-span-1">
+                        <h3 class="text-lg font-semibold text-gray-700">ROI (1. leto)</h3>
+                        <p id="roi-right" class="text-4xl font-bold text-green-600 mt-2">0.0%</p>
+                    </div>
+                    <div class="stat-card md:col-span-1">
+                        <h3 class="text-lg font-semibold text-gray-700">Investicija (1. faza)</h3>
+                        <p id="total-investment-right" class="text-4xl font-bold text-gray-800 mt-2">€0</p>
+                    </div>
+                </section>
+                
+                <section class="card">
+                     <h4 class="text-xl font-semibold mb-4 text-center">Sezonska Dobičkonosnost</h4>
                     <div class="chart-container h-96">
                         <canvas id="profitabilityChart"></canvas>
                     </div>
-                </div>
-                <div>
-                    <h4 class="text-xl font-semibold mb-4 text-center">Začetni Stroški (1. faza)</h4>
+                </section>
+
+                <section class="card">
+                     <h4 class="text-xl font-semibold mb-4 text-center">Razčlenitev Začetnih Stroškov (1. faza)</h4>
                      <div class="chart-container h-80">
                         <canvas id="startupCostChart"></canvas>
                     </div>
-                </div>
+                </section>
             </div>
-        </section>
-
+        </div>
     </main>
 
-    <footer class="text-center py-8 mt-12 border-t"><p class="text-gray-500">&copy; 2025</p></footer>
+    <footer class="text-center py-8 mt-12 border-t"><p class="text-gray-500">&copy; 2025 Dvorana za Agility</p></footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const inputs = {
-                annualMembers: document.getElementById('annualMembers'),
-                highSeasonHours: document.getElementById('highSeasonHours'),
-                lowSeasonHours: document.getElementById('lowSeasonHours'),
-                memberRatio: document.getElementById('memberRatio'),
-                hourRatio: document.getElementById('hourRatio'),
-                enablePremium: document.getElementById('enablePremium'),
-                premiumMembersHigh: document.getElementById('premiumMembersHigh'),
-                premiumMembersLow: document.getElementById('premiumMembersLow'),
-                premiumFee: document.getElementById('premiumFee'),
-                avgFreeHours: document.getElementById('avgFreeHours'),
-                enableRent: document.getElementById('enableRent'),
-                rentCost: document.getElementById('rentCost'),
-                annualFee: document.getElementById('annualFee'),
-                memberRate: document.getElementById('memberRate'),
-                memberRateHalf: document.getElementById('memberRateHalf'),
-                nonMemberRate: document.getElementById('nonMemberRate'),
-                nonMemberRateHalf: document.getElementById('nonMemberRateHalf'),
+            let activeModel = 'membership';
+
+            const btnMembership = document.getElementById('btnMembership');
+            const btnPackages = document.getElementById('btnPackages');
+            const membershipControls = document.getElementById('membershipModelControls');
+            const packagesControls = document.getElementById('packagesModelControls');
+            
+            const commonInputs = {
                 domeCost: document.getElementById('domeCost'),
                 turfCost: document.getElementById('turfCost'),
                 sitePrepCost: document.getElementById('sitePrepCost'),
@@ -196,6 +225,37 @@
                 insuranceCost: document.getElementById('insuranceCost'),
                 maintenanceCost: document.getElementById('maintenanceCost'),
                 softwareCost: document.getElementById('softwareCost'),
+                enableRent: document.getElementById('enableRent'),
+                rentCost: document.getElementById('rentCost'),
+            };
+
+            const modelInputs = {
+                membership: {
+                    annualMembers: document.getElementById('annualMembers'),
+                    highSeasonHours: document.getElementById('highSeasonHours'),
+                    lowSeasonHours: document.getElementById('lowSeasonHours'),
+                    memberRatio: document.getElementById('memberRatio'),
+                    hourRatio: document.getElementById('hourRatio'),
+                    enablePremium: document.getElementById('enablePremium'),
+                    premiumMembersHigh: document.getElementById('premiumMembersHigh'),
+                    premiumMembersLow: document.getElementById('premiumMembersLow'),
+                    premiumFee: document.getElementById('premiumFee'),
+                    avgFreeHours: document.getElementById('avgFreeHours'),
+                    annualFee: document.getElementById('annualFee'),
+                    memberRate: document.getElementById('memberRate'),
+                    memberRateHalf: document.getElementById('memberRateHalf'),
+                    nonMemberRate: document.getElementById('nonMemberRate'),
+                    nonMemberRateHalf: document.getElementById('nonMemberRateHalf'),
+                },
+                packages: {
+                    packHighSeasonHours: document.getElementById('packHighSeasonHours'),
+                    packLowSeasonHours: document.getElementById('packLowSeasonHours'),
+                    packRatio: document.getElementById('packRatio'),
+                    pack10HourPrice: document.getElementById('pack10HourPrice'),
+                    pack10HalfHourPrice: document.getElementById('pack10HalfHourPrice'),
+                    packSingleHourPrice: document.getElementById('packSingleHourPrice'),
+                    packSingleHalfHourPrice: document.getElementById('packSingleHalfHourPrice'),
+                }
             };
 
             const outputs = {
@@ -207,9 +267,12 @@
                 premiumMembersHighValue: document.getElementById('premiumMembersHighValue'),
                 premiumMembersLowValue: document.getElementById('premiumMembersLowValue'),
                 avgFreeHoursValue: document.getElementById('avgFreeHoursValue'),
-                annualProfit: document.getElementById('annual-profit'),
-                roi: document.getElementById('roi'),
-                totalInvestment: document.getElementById('total-investment'),
+                packHighSeasonHoursValue: document.getElementById('packHighSeasonHoursValue'),
+                packLowSeasonHoursValue: document.getElementById('packLowSeasonHoursValue'),
+                packRatioValue: document.getElementById('packRatioValue'),
+                annualProfit: document.getElementById('annual-profit-right'),
+                roi: document.getElementById('roi-right'),
+                totalInvestment: document.getElementById('total-investment-right'),
             };
             
             const premiumControlsContainer = document.getElementById('premiumControlsContainer');
@@ -218,33 +281,27 @@
             let profitabilityChart, startupCostChart;
 
             function addCostField(type) {
-                const container = type === 'startup' ? document.getElementById('dynamicStartupCostsContainer') : document.getElementById('dynamicMonthlyCostsContainer');
+                const containerId = type === 'startup' ? 'dynamicStartupCostsContainer' : 'dynamicMonthlyCostsContainer';
+                const container = document.getElementById(containerId);
                 const costClass = `dynamic-input dynamic-${type}-cost`;
                 const nameClass = `dynamic-input dynamic-${type}-name`;
 
                 const newRow = document.createElement('div');
                 newRow.className = 'flex items-center space-x-2';
-
                 const nameInput = document.createElement('input');
                 nameInput.type = 'text';
                 nameInput.placeholder = 'Ime stroška';
                 nameInput.className = `${nameClass} flex-grow`;
                 nameInput.addEventListener('input', calculateFinancials);
-
                 const valueInput = document.createElement('input');
                 valueInput.type = 'number';
                 valueInput.value = '0';
                 valueInput.className = `${costClass} w-24`;
                 valueInput.addEventListener('input', calculateFinancials);
-
                 const removeBtn = document.createElement('button');
                 removeBtn.textContent = '–';
                 removeBtn.className = 'px-2 py-0.5 bg-red-500 text-white rounded hover:bg-red-600 text-lg font-bold flex-shrink-0';
-                removeBtn.onclick = () => {
-                    newRow.remove();
-                    calculateFinancials();
-                };
-
+                removeBtn.onclick = () => { newRow.remove(); calculateFinancials(); };
                 newRow.appendChild(nameInput);
                 newRow.appendChild(valueInput);
                 newRow.appendChild(removeBtn);
@@ -252,6 +309,7 @@
             }
             
             function toggleControls(container, checkbox) {
+                if(!container || !checkbox) return;
                  const isEnabled = checkbox.checked;
                 container.style.opacity = isEnabled ? '1' : '0.5';
                 container.querySelectorAll('input, .slider').forEach(input => {
@@ -259,25 +317,35 @@
                 });
             }
 
-
-            function calculateFinancials() {
+            function getValues(inputGroup) {
                 const values = {};
-                for (const key in inputs) {
-                    if (inputs[key].type === 'checkbox') {
-                        values[key] = inputs[key].checked;
+                 for (const key in inputGroup) {
+                    if(!inputGroup[key]) continue;
+                    if (inputGroup[key].type === 'checkbox') {
+                        values[key] = inputGroup[key].checked;
                     } else {
-                        values[key] = parseFloat(inputs[key].value) || 0;
+                        values[key] = parseFloat(inputGroup[key].value) || 0;
                     }
                 }
+                return values;
+            }
 
-                if (outputs.annualMembersValue) outputs.annualMembersValue.textContent = values.annualMembers;
-                if (outputs.highSeasonHoursValue) outputs.highSeasonHoursValue.textContent = values.highSeasonHours;
-                if (outputs.lowSeasonHoursValue) outputs.lowSeasonHoursValue.textContent = values.lowSeasonHours;
-                if (outputs.memberRatioValue) outputs.memberRatioValue.textContent = values.memberRatio;
-                if (outputs.hourRatioValue) outputs.hourRatioValue.textContent = values.hourRatio;
-                if (outputs.premiumMembersHighValue) outputs.premiumMembersHighValue.textContent = values.premiumMembersHigh;
-                if (outputs.premiumMembersLowValue) outputs.premiumMembersLowValue.textContent = values.premiumMembersLow;
-                if (outputs.avgFreeHoursValue) outputs.avgFreeHoursValue.textContent = values.avgFreeHours;
+            function calculateFinancials() {
+                const cValues = getValues(commonInputs);
+                const mValues = getValues(modelInputs[activeModel]);
+                const values = {...cValues, ...mValues};
+
+                Object.keys(outputs).forEach(key => {
+                    const element = outputs[key];
+                    if (!element) return;
+
+                    if (element.tagName === 'SPAN') {
+                        const correspondingInputKey = key.replace('Value', '');
+                        if(values[correspondingInputKey] !== undefined) {
+                             element.textContent = values[correspondingInputKey];
+                        }
+                    }
+                });
 
                 let dynamicStartupCosts = 0;
                 document.querySelectorAll('.dynamic-startup-cost').forEach(input => dynamicStartupCosts += parseFloat(input.value) || 0);
@@ -290,37 +358,46 @@
                 if (values.enableRent) {
                     totalMonthlyExpenses += values.rentCost;
                 }
+
+                let highSeasonTotalRevenue = 0, lowSeasonTotalRevenue = 0;
                 
-                const hourRatioDecimal = values.hourRatio / 100;
-                const avgMemberRate = (values.memberRate * hourRatioDecimal) + (values.memberRateHalf * 2 * (1 - hourRatioDecimal));
-                const avgNonMemberRate = (values.nonMemberRate * hourRatioDecimal) + (values.nonMemberRateHalf * 2 * (1 - hourRatioDecimal));
-                const memberRatioDecimal = values.memberRatio / 100;
-
-                const monthlyAnnualMembershipRevenue = (values.annualMembers * values.annualFee) / 12;
-                
-                let highSeasonPremiumRevenue = 0, highSeasonReplacingFreeHours = 0;
-                let lowSeasonPremiumRevenue = 0, lowSeasonReplacingFreeHours = 0;
-
-                if (values.enablePremium) {
-                    highSeasonPremiumRevenue = values.premiumMembersHigh * values.premiumFee;
-                    const highSeasonWeeklyFreeHours = values.premiumMembersHigh * values.avgFreeHours;
-                    highSeasonReplacingFreeHours = highSeasonWeeklyFreeHours * 0.5;
-
-                    lowSeasonPremiumRevenue = values.premiumMembersLow * values.premiumFee;
-                    const lowSeasonWeeklyFreeHours = values.premiumMembersLow * values.avgFreeHours;
-                    lowSeasonReplacingFreeHours = lowSeasonWeeklyFreeHours * 0.5;
+                if (activeModel === 'membership') {
+                    const hourRatioDecimal = values.hourRatio / 100;
+                    const avgMemberRate = (values.memberRate * hourRatioDecimal) + (values.memberRateHalf * 2 * (1 - hourRatioDecimal));
+                    const avgNonMemberRate = (values.nonMemberRate * hourRatioDecimal) + (values.nonMemberRateHalf * 2 * (1 - hourRatioDecimal));
+                    const memberRatioDecimal = values.memberRatio / 100;
+                    const monthlyAnnualMembershipRevenue = (values.annualMembers * values.annualFee) / 12;
+                    let highSeasonPremiumRevenue = 0, highSeasonReplacingFreeHours = 0;
+                    let lowSeasonPremiumRevenue = 0, lowSeasonReplacingFreeHours = 0;
+                    if (values.enablePremium) {
+                        highSeasonPremiumRevenue = values.premiumMembersHigh * values.premiumFee;
+                        const highSeasonWeeklyFreeHours = values.premiumMembersHigh * values.avgFreeHours;
+                        highSeasonReplacingFreeHours = highSeasonWeeklyFreeHours * 0.5;
+                        lowSeasonPremiumRevenue = values.premiumMembersLow * values.premiumFee;
+                        const lowSeasonWeeklyFreeHours = values.premiumMembersLow * values.avgFreeHours;
+                        lowSeasonReplacingFreeHours = lowSeasonWeeklyFreeHours * 0.5;
+                    }
+                    const highSeasonPaidHours = Math.max(0, values.highSeasonHours - highSeasonReplacingFreeHours);
+                    const highSeasonHourlyRevenue = ((highSeasonPaidHours * memberRatioDecimal * avgMemberRate) + (highSeasonPaidHours * (1 - memberRatioDecimal) * avgNonMemberRate)) * 4.33;
+                    highSeasonTotalRevenue = highSeasonHourlyRevenue + monthlyAnnualMembershipRevenue + highSeasonPremiumRevenue;
+                    const lowSeasonPaidHours = Math.max(0, values.lowSeasonHours - lowSeasonReplacingFreeHours);
+                    const lowSeasonHourlyRevenue = ((lowSeasonPaidHours * memberRatioDecimal * avgMemberRate) + (lowSeasonPaidHours * (1 - memberRatioDecimal) * avgNonMemberRate)) * 4.33;
+                    lowSeasonTotalRevenue = lowSeasonHourlyRevenue + monthlyAnnualMembershipRevenue + lowSeasonPremiumRevenue;
+                } else {
+                    const pricePerHourFromPack = values.pack10HourPrice > 0 ? values.pack10HourPrice / 10 : 0;
+                    const pricePerHourFromHalfHourPack = values.pack10HalfHourPrice > 0 ? (values.pack10HalfHourPrice / 10) * 2 : 0;
+                    const avgPackPricePerHour = (pricePerHourFromPack + pricePerHourFromHalfHourPack) / 2;
+                    const pricePerHourSingle = values.packSingleHourPrice;
+                    const pricePerHalfHourSingle = values.packSingleHalfHourPrice;
+                    const avgSinglePricePerHour = (pricePerHourSingle * 0.5) + (pricePerHalfHourSingle * 2 * 0.5);
+                    const packRatioDecimal = values.packRatio / 100;
+                    const overallAvgRate = (avgPackPricePerHour * packRatioDecimal) + (avgSinglePricePerHour * (1 - packRatioDecimal));
+                    highSeasonTotalRevenue = values.packHighSeasonHours * overallAvgRate * 4.33;
+                    lowSeasonTotalRevenue = values.packLowSeasonHours * overallAvgRate * 4.33;
                 }
                 
-                const highSeasonPaidHours = Math.max(0, values.highSeasonHours - highSeasonReplacingFreeHours);
-                const highSeasonHourlyRevenue = ((highSeasonPaidHours * memberRatioDecimal * avgMemberRate) + (highSeasonPaidHours * (1 - memberRatioDecimal) * avgNonMemberRate)) * 4.33;
-                const highSeasonTotalRevenue = highSeasonHourlyRevenue + monthlyAnnualMembershipRevenue + highSeasonPremiumRevenue;
                 const highSeasonProfit = highSeasonTotalRevenue - totalMonthlyExpenses;
-
-                const lowSeasonPaidHours = Math.max(0, values.lowSeasonHours - lowSeasonReplacingFreeHours);
-                const lowSeasonHourlyRevenue = ((lowSeasonPaidHours * memberRatioDecimal * avgMemberRate) + (lowSeasonPaidHours * (1 - memberRatioDecimal) * avgNonMemberRate)) * 4.33;
-                const lowSeasonTotalRevenue = lowSeasonHourlyRevenue + monthlyAnnualMembershipRevenue + lowSeasonPremiumRevenue;
                 const lowSeasonProfit = lowSeasonTotalRevenue - totalMonthlyExpenses;
-
                 const annualProfit = (highSeasonProfit * 6) + (lowSeasonProfit * 6);
                 const roi = totalStartupCost > 0 ? (annualProfit / totalStartupCost) * 100 : 0;
                 
@@ -334,7 +411,7 @@
                 const startupValues = Array.from(document.getElementById('staticStartupCosts').querySelectorAll('input')).map(i => parseFloat(i.value) || 0);
                 document.querySelectorAll('.dynamic-startup-name').forEach((nameInput, index) => {
                     const valueInput = document.querySelectorAll('.dynamic-startup-cost')[index];
-                    if (nameInput.value && valueInput.value) {
+                    if (nameInput && nameInput.value && valueInput && valueInput.value) {
                         startupLabels.push(nameInput.value);
                         startupValues.push(parseFloat(valueInput.value) || 0);
                     }
@@ -361,60 +438,63 @@
 
             function createProfitabilityChart() {
                 const ctx = document.getElementById('profitabilityChart').getContext('2d');
-                profitabilityChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Visoka Sezona (Povp. Mesec)', 'Nizka Sezona (Povp. Mesec)'],
-                        datasets: [
-                            {label: 'Prihodki', data: [], backgroundColor: 'rgba(59, 130, 246, 0.7)'},
-                            {label: 'Stroški', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)'},
-                            {label: 'Dobiček', data: [], backgroundColor: 'rgba(22, 163, 74, 0.7)'}
-                        ]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: value => '€' + value.toLocaleString('sl-SI') } } }, plugins: { tooltip: { callbacks: { label: context => `${context.dataset.label}: €${context.parsed.y.toLocaleString('sl-SI')}` } } } }
-                });
+                profitabilityChart = new Chart(ctx, { type: 'bar', data: { labels: ['Visoka Sezona (Povp. Mesec)', 'Nizka Sezona (Povp. Mesec)'], datasets: [{label: 'Prihodki', data: [], backgroundColor: 'rgba(59, 130, 246, 0.7)'},{label: 'Stroški', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)'},{label: 'Dobiček', data: [], backgroundColor: 'rgba(22, 163, 74, 0.7)'}] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: value => '€' + value.toLocaleString('sl-SI') } } }, plugins: { tooltip: { callbacks: { label: context => `${context.dataset.label}: €${context.parsed.y.toLocaleString('sl-SI')}` } } } } });
             }
             
             function createStartupCostChart() {
                 const ctx = document.getElementById('startupCostChart').getContext('2d');
-                startupCostChart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: [],
-                        datasets: [{ data: [], hoverOffset: 4 }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: function(context) { const total = context.chart.getDatasetMeta(0).total; return `${context.label}: €${context.parsed.toLocaleString('sl-SI')} (${(total > 0 ? (context.parsed / total) * 100 : 0).toFixed(1)}%)`; } } } } }
-                });
+                startupCostChart = new Chart(ctx, { type: 'doughnut', data: { labels: [], datasets: [{ data: [], hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: function(context) { const total = context.chart.getDatasetMeta(0).total; return `${context.label}: €${context.parsed.toLocaleString('sl-SI')} (${(total > 0 ? (context.parsed / total) * 100 : 0).toFixed(1)}%)`; } } } } } });
             }
             
             createProfitabilityChart();
             createStartupCostChart();
             
+            function switchModel(model) {
+                activeModel = model;
+                if (model === 'membership') {
+                    membershipControls.classList.remove('hidden');
+                    packagesControls.classList.add('hidden');
+                    btnMembership.classList.add('active');
+                    btnPackages.classList.remove('active');
+                } else {
+                    membershipControls.classList.add('hidden');
+                    packagesControls.classList.remove('hidden');
+                    btnMembership.classList.remove('active');
+                    btnPackages.classList.add('active');
+                }
+                calculateFinancials();
+            }
+
+            btnMembership.addEventListener('click', () => switchModel('membership'));
+            btnPackages.addEventListener('click', () => switchModel('packages'));
+            
             document.querySelectorAll('.dynamic-input, .dynamic-slider, .dynamic-checkbox').forEach(input => {
                 input.addEventListener('input', calculateFinancials);
             });
             
-            inputs.enablePremium.addEventListener('change', () => toggleControls(premiumControlsContainer, inputs.enablePremium));
-            inputs.enableRent.addEventListener('change', () => toggleControls(rentControlsContainer, inputs.enableRent));
             
+            toggleControls(premiumControlsContainer, modelInputs.membership.enablePremium);
+            if (modelInputs.membership.enablePremium) {
+                modelInputs.membership.enablePremium.addEventListener('change', () => toggleControls(premiumControlsContainer, modelInputs.membership.enablePremium));
+            }
+            
+            toggleControls(rentControlsContainer, commonInputs.enableRent);
+            if(commonInputs.enableRent) {
+                commonInputs.enableRent.addEventListener('change', () => toggleControls(rentControlsContainer, commonInputs.enableRent));
+            }
+
             document.getElementById('addStartupCostBtn').addEventListener('click', () => addCostField('startup'));
             document.getElementById('addMonthlyCostBtn').addEventListener('click', () => addCostField('monthly'));
-
-            toggleControls(premiumControlsContainer, inputs.enablePremium);
-            toggleControls(rentControlsContainer, inputs.enableRent);
+            
             calculateFinancials();
 
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('main section[id]');
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`));
-                    }
-                });
-            }, { rootMargin: "-50% 0px -50% 0px" });
-            sections.forEach(section => observer.observe(section));
+            document.querySelectorAll('.info-icon').forEach(icon => {
+                const tooltip = icon.closest('.relative').querySelector('.info-tooltip');
+                icon.addEventListener('mouseenter', () => { if (tooltip) { tooltip.classList.remove('invisible', 'opacity-0'); tooltip.classList.add('visible', 'opacity-100'); } });
+                icon.addEventListener('mouseleave', () => { if (tooltip) { tooltip.classList.remove('visible', 'opacity-100'); tooltip.classList.add('invisible', 'opacity-0'); } });
+            });
         });
     </script>
 </body>
 </html>
+
