@@ -3,24 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulatorček</title>
+    <title>Finančni načrt - Dvorana za Agility</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Neutrals & Subtle Blue -->
-    <!-- Application Structure Plan: A single-page, thematic dashboard layout designed for an investor. It starts with key metrics (ROI, Profit) to grab attention, followed by sections explaining the Opportunity, Solution, and a powerful interactive Financial Simulator as the centerpiece. This structure transforms a static plan into a dynamic tool, allowing the investor to explore scenarios and understand the business model's robustness, leading to a more persuasive presentation than a linear document. The user flow is guided by a sticky navigation bar for easy access to all key data points. -->
-    <!-- Visualization & Content Choices: 
-        - Key Metrics (Inform): Large, dynamic "stat cards" for immediate impact. Updated by the simulator.
-        - Startup Costs (Organize): A Donut chart (Chart.js) to clearly show the breakdown of the initial investment. Interaction: Hover tooltips.
-        - Monthly Costs (Organize): A simple Bar chart (Chart.js) for a clear view of fixed operational expenses.
-        - Seasonal Profitability (Compare/Change): The core interactive element. An interactive dual Bar chart (Chart.js) dynamically compares high and low season performance. It's controlled by sliders (HTML) that allow the user to change assumptions (members, hours) and see the impact in real-time. This answers the "what if" questions an investor has.
-        - Solution & Phases (Organize): Clean HTML/CSS cards with icons for a quick, visual summary of the business's components and development path. Interaction: Subtle hover effects.
-        - Partnership (Inform/Compare): Simple, clear HTML cards explaining the two options.
-        - Justification: This structure prioritizes clarity and engagement, moving from a high-level overview to deep, interactive financial exploration, which is most critical for an investment decision.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8f7f4; color: #4a4a4a; scroll-behavior: smooth; }
         .card { background-color: #ffffff; border-radius: 0.75rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 2rem; }
@@ -40,8 +28,7 @@
 
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <?xml version="1.0" encoding="UTF-8"?>
-            <h1 class="text-xl font-bold text-gray-800">Dvorana za Agility</h1>
+            <h1 class="text-xl font-bold text-gray-800">Dvorana za Agi</h1>
         </nav>
     </header>
 
@@ -49,18 +36,15 @@
         
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
             
-            <!-- LEFT COLUMN (INPUTS) -->
             <div class="lg:col-span-2">
                 <div class="lg:sticky lg:top-24 card">
-                    <h3 class="text-3xl font-bold text-gray-800 mb-2 text-center">Finančni simulator</h3>                    
                     <div class="sidebar overflow-y-auto pr-2">
                          <div class="space-y-6">
                             <div>
-                                <h5 class="font-bold mb-3 text-center text-gray-700">Scenarij uporabe</h5>
                                 <div class="space-y-4">
-                                    <div><label for="packHighSeasonHours" class="block mb-1 slider-label">Skupne plačane ure/teden (Visoka sezona, <span id="packHighSeasonHoursValue">25</span>h)</label><input type="range" min="5" max="60" value="30" class="slider dynamic-slider" id="packHighSeasonHours"></div>
-                                    <div><label for="packLowSeasonHours" class="block mb-1 slider-label">Skupne plačane ure/teden (Nizka sezona, <span id="packLowSeasonHoursValue">15</span>h)</label><input type="range" min="5" max="40" value="20" class="slider dynamic-slider" id="packLowSeasonHours"></div>
-                                    <div><label for="packRatio" class="block mb-1 slider-label">Delež ur, prodanih v paketih (<span id="packRatioValue">80</span>%)</label><input type="range" min="0" max="100" value="50" class="slider dynamic-slider" id="packRatio"></div>
+                                    <div><label for="packHighSeasonHours" class="block mb-1 slider-label">Skupne plačane ure/teden (Visoka sezona, <span id="packHighSeasonHoursValue">20</span>h)</label><input type="range" min="5" max="60" value="20" class="slider dynamic-slider" id="packHighSeasonHours"></div>
+                                    <div><label for="packLowSeasonHours" class="block mb-1 slider-label">Skupne plačane ure/teden (Nizka sezona, <span id="packLowSeasonHoursValue">10</span>h)</label><input type="range" min="5" max="40" value="10" class="slider dynamic-slider" id="packLowSeasonHours"></div>
+                                    <div><label for="packRatio" class="block mb-1 slider-label">Delež ur, prodanih v paketih (<span id="packRatioValue">50</span>%)</label><input type="range" min="0" max="100" value="50" class="slider dynamic-slider" id="packRatio"></div>
                                 </div>
                             </div>
                             <div>
@@ -70,14 +54,14 @@
                                         <label for="packHourCount" class="block mb-1 slider-label">Število ur v paketu (<span id="packHourCountValue">10</span>)</label>
                                         <input type="range" min="5" max="20" value="10" class="slider dynamic-slider" id="packHourCount">
                                         <label for="packHourPrice" class="input-label mt-2">Cena paketa</label>
-                                        <input type="number" id="packHourPrice" value="270" class="dynamic-input">
+                                        <input type="number" id="packHourPrice" value="250" class="dynamic-input">
                                         <p class="text-sm text-gray-500 mt-1">Efektivna cena: <span id="effectiveHourPrice" class="font-bold"></span> €/uro</p>
                                     </div>
                                     <div>
                                         <label for="packHalfHourCount" class="block mb-1 slider-label">Št. terminov v paketu (30min) (<span id="packHalfHourCountValue">10</span>)</label>
                                         <input type="range" min="5" max="20" value="10" class="slider dynamic-slider" id="packHalfHourCount">
                                         <label for="packHalfHourPrice" class="input-label mt-2">Cena paketa</label>
-                                        <input type="number" id="packHalfHourPrice" value="180" class="dynamic-input">
+                                        <input type="number" id="packHalfHourPrice" value="150" class="dynamic-input">
                                         <p class="text-sm text-gray-500 mt-1">Efektivna cena: <span id="effectiveHalfHourPrice" class="font-bold"></span> €/termin</p>
                                     </div>
                                 </div>
@@ -87,109 +71,87 @@
                                     <div><label for="packSingleHalfHourPrice" class="input-label">Cena/30min (posamično)</label><input type="number" id="packSingleHalfHourPrice" value="20" class="dynamic-input"></div>
                                 </div>
                             </div>
+                            <div>
+                                <h5 class="font-bold mb-3 pt-4 border-t text-center text-gray-700">Scenarij Investitorjev</h5>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="investorCount" class="block mb-1 slider-label">Število investitorjev (<span id="investorCountValue">7</span>)</label>
+                                        <input type="range" min="1" max="15" value="7" class="slider dynamic-slider" id="investorCount">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-6 mt-6 pt-6 border-t">
                             <div>
-                                 <h5 class="font-bold mb-3 text-center text-gray-700">Začetni stroški (€) - 1. faza</h5>
+                                 <h5 class="font-bold mb-3 text-center text-gray-700">Začetni stroški (€)</h5>
                                 <div class="space-y-2" id="staticStartupCosts">
-                                   <div><label for="domeCost" class="input-label">Dvorana</label><input type="number" id="domeCost" value="100000" class="dynamic-input common-input"></div>
-                                   <div><label for="turfCost" class="input-label">Umetna trava</label><input type="number" id="turfCost" value="25000" class="dynamic-input common-input"></div>
-                                   <div><label for="sitePrepCost" class="input-label">Priprava terena</label><input type="number" id="sitePrepCost" value="10000" class="dynamic-input common-input"></div>
-                                   <div><label for="techCost" class="input-label">Osnovna tehnologija</label><input type="number" id="techCost" value="3000" class="dynamic-input common-input"></div>
-                                   <div><label for="permitsCost" class="input-label">Dovoljenja/papirologija</label><input type="number" id="permitsCost" value="5000" class="dynamic-input common-input"></div>
+                                    <div><label for="turfCost" class="input-label">Umetna trava (JutaGrass 20x40m)</label><input type="number" id="turfCost" value="8400" class="dynamic-input startup-cost-input"></div>
+                                    <div><label for="sandCost" class="input-label">Kremenčev pesek</label><input type="number" id="sandCost" value="1000" class="dynamic-input startup-cost-input"></div>
+                                    <div><label for="obstaclesCost" class="input-label">Conske ovire</label><input type="number" id="obstaclesCost" value="5660" class="dynamic-input startup-cost-input"></div>
+                                    <div><label for="tunnelsCost" class="input-label">Tuneli + vreče</label><input type="number" id="tunnelsCost" value="2000" class="dynamic-input startup-cost-input"></div>
+                                    <div><label for="jumpsCost" class="input-label">Hopi</label><input type="number" id="jumpsCost" value="1000" class="dynamic-input startup-cost-input"></div>
+                                    <div><label for="slalomCost" class="input-label">Slalom</label><input type="number" id="slalomCost" value="450" class="dynamic-input startup-cost-input"></div>
+                                    <div><label for="restCost" class="input-label">Ostalo</label><input type="number" id="restCost" value="1000" class="dynamic-input startup-cost-input"></div>
                                 </div>
                                 <div id="dynamicStartupCostsContainer" class="space-y-2 mt-2"></div>
                                 <button id="addStartupCostBtn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 w-full text-left">+ Dodaj nov strošek</button>
-                                 <div class="mt-4 border-t pt-4">
-                                    <h6 class="font-semibold text-gray-600 text-sm">Načrtovani stroški (€) - 2. faza</h6>
-                                    <div class="space-y-2 mt-2">
-                                        <div><label class="input-label text-gray-500">Nadgradnja kamer</label><input type="number" value="3000" class="dynamic-input bg-gray-200" disabled></div>
-                                        <div><label class="input-label text-gray-500">Sanitarni kontejner</label><input type="number" value="5000" class="dynamic-input bg-gray-200" disabled></div>
-                                    </div>
-                                </div>
                             </div>
                             <div>
                                  <h5 class="font-bold mb-3 text-center text-gray-700">Mesečni stroški (€)</h5>
                                 <div class="space-y-2" id="staticMonthlyCosts">
-                                   <div><label for="electricityCost" class="input-label">Elektrika</label><input type="number" id="electricityCost" value="1500" class="dynamic-input common-input"></div>
-                                   <div><label for="insuranceCost" class="input-label">Zavarovanje</label><input type="number" id="insuranceCost" value="300" class="dynamic-input common-input"></div>
-                                   <div><label for="maintenanceCost" class="input-label">Vzdrževanje</label><input type="number" id="maintenanceCost" value="400" class="dynamic-input common-input"></div>
-                                   <div><label for="softwareCost" class="input-label">Programska oprema</label><input type="number" id="softwareCost" value="100" class="dynamic-input common-input"></div>
+                                    <div><label for="rentCost" class="input-label">Najemnina</label><input type="number" id="rentCost" value="1000" class="dynamic-input monthly-cost-input"></div>
+                                    <div><label for="maintenanceCost" class="input-label">Vzdrževanje</label><input type="number" id="maintenanceCost" value="300" class="dynamic-input monthly-cost-input"></div>
                                 </div>
                                 <div id="dynamicMonthlyCostsContainer" class="space-y-2 mt-2"></div>
                                 <button id="addMonthlyCostBtn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 w-full text-left">+ Dodaj nov strošek</button>
-                                <div class="mt-4 border-t pt-4">
-                                     <div class="flex items-center">
-                                        <input type="checkbox" id="enableRent" class="dynamic-checkbox common-input h-4 w-4 rounded">
-                                        <label for="enableRent" class="ml-2 input-label font-bold">Vključi najemnino</label>
-                                    </div>
-                                    <div id="rentControlsContainer" class="mt-2 transition-opacity duration-300">
-                                         <label for="rentCost" class="input-label">Mesečna najemnina (€)</label>
-                                        <input type="number" id="rentCost" value="1000" class="dynamic-input common-input">
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN (OUTPUTS) -->
             <div class="lg:col-span-3 space-y-8">
-                <section class="grid md:grid-cols-3 gap-8">
+                <section class="grid md:grid-cols-2 gap-8">
                     <div class="stat-card md:col-span-1">
                         <h3 class="text-lg font-semibold text-gray-700">Letni Dobiček</h3>
                         <p id="annual-profit-right" class="text-4xl font-bold text-blue-600 mt-2">€0</p>
                     </div>
                     <div class="stat-card md:col-span-1">
-                        <h3 class="text-lg font-semibold text-gray-700">ROI (1. leto)</h3>
-                        <p id="roi-right" class="text-4xl font-bold text-green-600 mt-2">0.0%</p>
-                    </div>
-                    <div class="stat-card md:col-span-1">
-                        <h3 class="text-lg font-semibold text-gray-700">Investicija (1. faza)</h3>
+                        <h3 class="text-lg font-semibold text-gray-700">Celotna Investicija</h3>
                         <p id="total-investment-right" class="text-4xl font-bold text-gray-800 mt-2">€0</p>
                     </div>
                 </section>
                 
+                <section class="grid md:grid-cols-2 gap-8">
+                    <div class="stat-card">
+                        <h3 class="text-lg font-semibold text-gray-700">Vložek na Investitorja</h3>
+                        <p id="investmentPerInvestor" class="text-4xl font-bold text-gray-800 mt-2">€0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="text-lg font-semibold text-gray-700">Letni Donos na Investitorja</h3>
+                        <p id="returnPerInvestor" class="text-4xl font-bold text-green-600 mt-2">€0</p>
+                    </div>
+                </section>
+                
                 <section class="card">
-                     <h4 class="text-xl font-semibold mb-4 text-center">Sezonska Dobičkonosnost</h4>
+                     <h4 class="text-xl font-semibold mb-4 text-center">Sezonsko</h4>
                     <div class="chart-container h-96">
                         <canvas id="profitabilityChart"></canvas>
                     </div>
                 </section>
 
-                <section class="card">
-                     <h4 class="text-xl font-semibold mb-4 text-center">Razčlenitev Začetnih Stroškov (1. faza)</h4>
-                     <div class="chart-container h-80">
-                        <canvas id="startupCostChart"></canvas>
-                    </div>
-                </section>
             </div>
         </div>
     </main>
 
-    <footer class="text-center py-8 mt-12 border-t"><p class="text-gray-500">&copy; 2025 Dvorana za Agility | Študija Izvedljivosti</p></footer>
+    <footer class="text-center py-8 mt-12 border-t"><p class="text-gray-500">&copy; Agility dvorana</p></footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
-            document.getElementById('membershipModelControls')?.remove();
-            document.getElementById('btnMembership')?.remove();
-            document.getElementById('btnPackages')?.remove();
-
+            
+            // --- ELEMENT SELECTORS ---
             const inputs = {
-                domeCost: document.getElementById('domeCost'),
-                turfCost: document.getElementById('turfCost'),
-                sitePrepCost: document.getElementById('sitePrepCost'),
-                techCost: document.getElementById('techCost'),
-                permitsCost: document.getElementById('permitsCost'),
-                electricityCost: document.getElementById('electricityCost'),
-                insuranceCost: document.getElementById('insuranceCost'),
-                maintenanceCost: document.getElementById('maintenanceCost'),
-                softwareCost: document.getElementById('softwareCost'),
-                enableRent: document.getElementById('enableRent'),
-                rentCost: document.getElementById('rentCost'),
                 packHighSeasonHours: document.getElementById('packHighSeasonHours'),
                 packLowSeasonHours: document.getElementById('packLowSeasonHours'),
                 packRatio: document.getElementById('packRatio'),
@@ -199,6 +161,7 @@
                 packHalfHourPrice: document.getElementById('packHalfHourPrice'),
                 packSingleHourPrice: document.getElementById('packSingleHourPrice'),
                 packSingleHalfHourPrice: document.getElementById('packSingleHalfHourPrice'),
+                investorCount: document.getElementById('investorCount'),
             };
 
             const outputs = {
@@ -210,94 +173,95 @@
                 effectiveHourPrice: document.getElementById('effectiveHourPrice'),
                 effectiveHalfHourPrice: document.getElementById('effectiveHalfHourPrice'),
                 annualProfit: document.getElementById('annual-profit-right'),
-                roi: document.getElementById('roi-right'),
+                // REMOVED: roi: document.getElementById('roi-right'),
                 totalInvestment: document.getElementById('total-investment-right'),
+                investorCountValue: document.getElementById('investorCountValue'),
+                investmentPerInvestor: document.getElementById('investmentPerInvestor'),
+                returnPerInvestor: document.getElementById('returnPerInvestor'),
             };
             
-            const rentControlsContainer = document.getElementById('rentControlsContainer');
+            let profitabilityChart;
 
-            let profitabilityChart, startupCostChart;
-
+            // --- DYNAMIC FIELD FUNCTIONS ---
             function addCostField(type) {
-                const containerId = type === 'startup' ? 'dynamicStartupCostsContainer' : 'dynamicMonthlyCostsContainer';
+                const isStartup = type === 'startup';
+                const containerId = isStartup ? 'dynamicStartupCostsContainer' : 'dynamicMonthlyCostsContainer';
                 const container = document.getElementById(containerId);
-                const costClass = `dynamic-input dynamic-${type}-cost`;
-                const nameClass = `dynamic-input dynamic-${type}-name`;
+                
+                const costClass = `dynamic-input ${isStartup ? 'dynamic-startup-cost' : 'dynamic-monthly-cost'}`;
+                const nameClass = `dynamic-input ${isStartup ? 'dynamic-startup-name' : 'dynamic-monthly-name'}`;
+
                 const newRow = document.createElement('div');
                 newRow.className = 'flex items-center space-x-2';
+
                 const nameInput = document.createElement('input');
                 nameInput.type = 'text';
                 nameInput.placeholder = 'Ime stroška';
                 nameInput.className = `${nameClass} flex-grow`;
+                nameInput.setAttribute('aria-label', 'Ime novega stroška');
                 nameInput.addEventListener('input', calculateFinancials);
+                
                 const valueInput = document.createElement('input');
                 valueInput.type = 'number';
                 valueInput.value = '0';
                 valueInput.className = `${costClass} w-24`;
+                valueInput.setAttribute('aria-label', 'Vrednost novega stroška');
                 valueInput.addEventListener('input', calculateFinancials);
+
                 const removeBtn = document.createElement('button');
                 removeBtn.textContent = '–';
                 removeBtn.className = 'px-2 py-0.5 bg-red-500 text-white rounded hover:bg-red-600 text-lg font-bold flex-shrink-0';
                 removeBtn.onclick = () => { newRow.remove(); calculateFinancials(); };
+
                 newRow.appendChild(nameInput);
                 newRow.appendChild(valueInput);
                 newRow.appendChild(removeBtn);
                 container.appendChild(newRow);
             }
             
-            function toggleControls(container, checkbox) {
-                if(!container || !checkbox) return;
-                 const isEnabled = checkbox.checked;
-                container.style.opacity = isEnabled ? '1' : '0.5';
-                container.querySelectorAll('input, .slider').forEach(input => {
-                    input.disabled = !isEnabled;
-                });
-            }
-
-            function getValues(inputGroup) {
+            // --- CORE CALCULATION LOGIC ---
+            function getValues() {
                 const values = {};
-                 for (const key in inputGroup) {
-                    if(!inputGroup[key]) continue;
-                    if (inputGroup[key].type === 'checkbox') {
-                        values[key] = inputGroup[key].checked;
-                    } else {
-                        values[key] = parseFloat(inputGroup[key].value) || 0;
-                    }
+                for (const key in inputs) {
+                    values[key] = parseFloat(inputs[key].value) || 0;
                 }
                 return values;
             }
 
             function calculateFinancials() {
-                const values = getValues(inputs);
+                const values = getValues();
 
+                // Update slider value displays
                 Object.keys(outputs).forEach(key => {
                     const element = outputs[key];
                     if (element && element.tagName === 'SPAN') {
                         const correspondingInputKey = key.replace('Value', '');
                         if(values[correspondingInputKey] !== undefined) {
-                             element.textContent = values[correspondingInputKey];
+                            element.textContent = values[correspondingInputKey];
                         }
                     }
                 });
 
-                let dynamicStartupCosts = 0;
-                document.querySelectorAll('.dynamic-startup-cost').forEach(input => dynamicStartupCosts += parseFloat(input.value) || 0);
-                const totalStartupCost = values.domeCost + values.turfCost + values.sitePrepCost + values.techCost + values.permitsCost + dynamicStartupCosts;
-
-                let dynamicMonthlyCosts = 0;
-                document.querySelectorAll('.dynamic-monthly-cost').forEach(input => dynamicMonthlyCosts += parseFloat(input.value) || 0);
-                let totalMonthlyExpenses = values.electricityCost + values.insuranceCost + values.maintenanceCost + values.softwareCost + dynamicMonthlyCosts;
+                // Calculate total startup cost by querying all relevant inputs
+                let totalStartupCost = 0;
+                document.querySelectorAll('.startup-cost-input, .dynamic-startup-cost').forEach(input => {
+                    totalStartupCost += parseFloat(input.value) || 0;
+                });
                 
-                if (values.enableRent) {
-                    totalMonthlyExpenses += values.rentCost;
-                }
-
+                // Calculate total monthly expenses by querying all relevant inputs
+                let totalMonthlyExpenses = 0;
+                document.querySelectorAll('.monthly-cost-input, .dynamic-monthly-cost').forEach(input => {
+                    totalMonthlyExpenses += parseFloat(input.value) || 0;
+                });
+                
+                // Calculate effective prices
                 const pricePerSingleHourInPack = values.packHourCount > 0 ? values.packHourPrice / values.packHourCount : 0;
                 const pricePerSingleHalfHourInPack = values.packHalfHourCount > 0 ? values.packHalfHourPrice / values.packHalfHourCount : 0;
                 
                 if(outputs.effectiveHourPrice) outputs.effectiveHourPrice.textContent = pricePerSingleHourInPack.toFixed(2);
                 if(outputs.effectiveHalfHourPrice) outputs.effectiveHalfHourPrice.textContent = pricePerSingleHalfHourInPack.toFixed(2);
 
+                // Revenue calculation
                 const avgPackPricePerHour = (pricePerSingleHourInPack * 0.5) + (pricePerSingleHalfHourInPack * 0.5 * 2);
                 const avgSinglePricePerHour = (values.packSingleHourPrice * 0.5) + (values.packSingleHalfHourPrice * 2 * 0.5);
                 const packRatioDecimal = values.packRatio / 100;
@@ -309,26 +273,24 @@
                 const highSeasonProfit = highSeasonTotalRevenue - totalMonthlyExpenses;
                 const lowSeasonProfit = lowSeasonTotalRevenue - totalMonthlyExpenses;
                 const annualProfit = (highSeasonProfit * 6) + (lowSeasonProfit * 6);
-                const roi = totalStartupCost > 0 ? (annualProfit / totalStartupCost) * 100 : 0;
                 
+                // Investor Calculations
+                const investorCount = values.investorCount > 0 ? values.investorCount : 1;
+                const investmentPerInvestor = totalStartupCost / investorCount;
+                const returnPerInvestor = annualProfit / investorCount;
+
+                // Update main display cards
                 outputs.totalInvestment.textContent = '€' + totalStartupCost.toLocaleString('sl-SI', { maximumFractionDigits: 0 });
                 outputs.annualProfit.textContent = '€' + annualProfit.toLocaleString('sl-SI', { maximumFractionDigits: 0 });
-                outputs.roi.textContent = roi.toFixed(1) + '%';
+                // REMOVED: outputs.roi.textContent = roi.toFixed(1) + '%';
+                outputs.investmentPerInvestor.textContent = '€' + investmentPerInvestor.toLocaleString('sl-SI', { maximumFractionDigits: 0 });
+                outputs.returnPerInvestor.textContent = '€' + returnPerInvestor.toLocaleString('sl-SI', { maximumFractionDigits: 0 });
                 
+                // Update profitability chart
                 updateProfitabilityChart(highSeasonTotalRevenue, lowSeasonTotalRevenue, totalMonthlyExpenses, highSeasonProfit, lowSeasonProfit);
-                
-                const startupLabels = Array.from(document.getElementById('staticStartupCosts').querySelectorAll('label')).map(l => l.textContent);
-                const startupValues = Array.from(document.getElementById('staticStartupCosts').querySelectorAll('input')).map(i => parseFloat(i.value) || 0);
-                document.querySelectorAll('.dynamic-startup-name').forEach((nameInput, index) => {
-                    const valueInput = document.querySelectorAll('.dynamic-startup-cost')[index];
-                    if (nameInput && nameInput.value && valueInput && valueInput.value) {
-                        startupLabels.push(nameInput.value);
-                        startupValues.push(parseFloat(valueInput.value) || 0);
-                    }
-                });
-                updateStartupCostChart(startupLabels, startupValues);
             }
             
+            // --- CHART FUNCTIONS ---
             function updateProfitabilityChart(highRevenue, lowRevenue, expenses, highProfit, lowProfit) {
                 if (!profitabilityChart) return;
                 profitabilityChart.data.datasets[0].data = [highRevenue, lowRevenue];
@@ -337,43 +299,23 @@
                 profitabilityChart.update();
             }
 
-            function updateStartupCostChart(labels, costData) {
-                if (!startupCostChart) return;
-                startupCostChart.data.labels = labels;
-                startupCostChart.data.datasets[0].data = costData;
-                const baseColors = ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe', '#fde68a', '#fca5a5', '#a78bfa', '#fdba74', '#86efac'];
-                startupCostChart.data.datasets[0].backgroundColor = Array.from({ length: labels.length }, (_, i) => baseColors[i % baseColors.length]);
-                startupCostChart.update();
-            }
-
             function createProfitabilityChart() {
                 const ctx = document.getElementById('profitabilityChart').getContext('2d');
                 profitabilityChart = new Chart(ctx, { type: 'bar', data: { labels: ['Visoka Sezona (Povp. Mesec)', 'Nizka Sezona (Povp. Mesec)'], datasets: [{label: 'Prihodki', data: [], backgroundColor: 'rgba(59, 130, 246, 0.7)'},{label: 'Stroški', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)'},{label: 'Dobiček', data: [], backgroundColor: 'rgba(22, 163, 74, 0.7)'}] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: value => '€' + value.toLocaleString('sl-SI') } } }, plugins: { tooltip: { callbacks: { label: context => `${context.dataset.label}: €${context.parsed.y.toLocaleString('sl-SI')}` } } } } });
             }
             
-            function createStartupCostChart() {
-                const ctx = document.getElementById('startupCostChart').getContext('2d');
-                startupCostChart = new Chart(ctx, { type: 'doughnut', data: { labels: [], datasets: [{ data: [], hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: function(context) { const total = context.chart.getDatasetMeta(0).total; return `${context.label}: €${context.parsed.toLocaleString('sl-SI')} (${(total > 0 ? (context.parsed / total) * 100 : 0).toFixed(1)}%)`; } } } } } });
-            }
-            
+            // --- INITIALIZATION ---
             createProfitabilityChart();
-            createStartupCostChart();
             
-            document.querySelectorAll('.dynamic-input, .dynamic-slider, .dynamic-checkbox').forEach(input => {
+            document.querySelectorAll('.dynamic-input, .dynamic-slider').forEach(input => {
                 input.addEventListener('input', calculateFinancials);
             });
             
-            toggleControls(rentControlsContainer, inputs.enableRent);
-            if(inputs.enableRent) {
-                inputs.enableRent.addEventListener('change', () => toggleControls(rentControlsContainer, inputs.enableRent));
-            }
-
             document.getElementById('addStartupCostBtn').addEventListener('click', () => addCostField('startup'));
             document.getElementById('addMonthlyCostBtn').addEventListener('click', () => addCostField('monthly'));
             
-            calculateFinancials();
+            calculateFinancials(); // Initial calculation on page load
         });
     </script>
 </body>
 </html>
-
