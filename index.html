@@ -83,8 +83,16 @@
                                 </div>
                                 <h5 class="font-bold mt-4 mb-3 text-center text-gray-700">Posamični termini (€)</h5>
                                  <div class="grid grid-cols-2 gap-4">
-                                    <div><label for="packSingleHourPrice" class="input-label">Cena/uro (posamično)</label><input type="number" id="packSingleHourPrice" value="30" class="dynamic-input"></div>
-                                    <div><label for="packSingleHalfHourPrice" class="input-label">Cena/30min (posamično)</label><input type="number" id="packSingleHalfHourPrice" value="20" class="dynamic-input"></div>
+                                    <div>
+                                        <label for="packSingleHourPrice" class="input-label">Cena/uro (posamično)</label>
+                                        <input type="number" id="packSingleHourPrice" value="30" class="dynamic-input">
+                                        <p class="text-sm text-gray-500 mt-1"><span id="singleHourPriceNet" class="font-semibold"></span> € neto</p>
+                                    </div>
+                                    <div>
+                                        <label for="packSingleHalfHourPrice" class="input-label">Cena/30min (posamično)</label>
+                                        <input type="number" id="packSingleHalfHourPrice" value="20" class="dynamic-input">
+                                        <p class="text-sm text-gray-500 mt-1"><span id="singleHalfHourPriceNet" class="font-semibold"></span> € neto</p>
+                                    </div>
                                 </div>
                             </div>
                             <div>
@@ -192,9 +200,11 @@
                 packHalfHourCountValue: document.getElementById('packHalfHourCountValue'),
                 effectiveHourPrice: document.getElementById('effectiveHourPrice'),
                 effectiveHalfHourPrice: document.getElementById('effectiveHalfHourPrice'),
-                // SPREMEMBA TUKAJ
                 effectiveHourPriceNet: document.getElementById('effectiveHourPriceNet'),
                 effectiveHalfHourPriceNet: document.getElementById('effectiveHalfHourPriceNet'),
+                // SPREMEMBA TUKAJ
+                singleHourPriceNet: document.getElementById('singleHourPriceNet'),
+                singleHalfHourPriceNet: document.getElementById('singleHalfHourPriceNet'),
                 annualProfit: document.getElementById('annual-profit-right'),
                 totalInvestment: document.getElementById('total-investment-right'),
                 investorCountValue: document.getElementById('investorCountValue'),
@@ -249,15 +259,9 @@
                 const vatDivisor = 1 + (values.vatRate / 100);
 
                 // Update slider value displays
-                Object.keys(outputs).forEach(key => {
-                    const element = outputs[key];
-                    if (element && element.tagName === 'SPAN' && !key.startsWith('effective')) {
-                        const correspondingInputKey = key.replace('Value', '');
-                        if(values[correspondingInputKey] !== undefined) {
-                            element.textContent = values[correspondingInputKey];
-                        }
-                    }
-                });
+                outputs.packHighSeasonHoursValue.textContent = values.packHighSeasonHours;
+                outputs.packLowSeasonHoursValue.textContent = values.packLowSeasonHours;
+                outputs.packRatioValue.textContent = values.packRatio;
                 outputs.packHourCountValue.textContent = values.packHourCount;
                 outputs.packHalfHourCountValue.textContent = values.packHalfHourCount;
                 outputs.investorCountValue.textContent = values.investorCount;
@@ -275,16 +279,23 @@
                     totalMonthlyExpenses += parseFloat(input.value) || 0;
                 });
                 
-                // SPREMEMBA TUKAJ: Calculate effective prices (gross and net)
+                // Calculate effective prices (gross and net) for packages
                 const pricePerSingleHourInPack = values.packHourCount > 0 ? values.packHourPrice / values.packHourCount : 0;
                 const pricePerSingleHalfHourInPack = values.packHalfHourCount > 0 ? values.packHalfHourPrice / values.packHalfHourCount : 0;
                 const netPricePerSingleHourInPack = pricePerSingleHourInPack / vatDivisor;
                 const netPricePerSingleHalfHourInPack = pricePerSingleHalfHourInPack / vatDivisor;
 
-                if(outputs.effectiveHourPrice) outputs.effectiveHourPrice.textContent = pricePerSingleHourInPack.toFixed(2);
-                if(outputs.effectiveHalfHourPrice) outputs.effectiveHalfHourPrice.textContent = pricePerSingleHalfHourInPack.toFixed(2);
-                if(outputs.effectiveHourPriceNet) outputs.effectiveHourPriceNet.textContent = netPricePerSingleHourInPack.toFixed(2);
-                if(outputs.effectiveHalfHourPriceNet) outputs.effectiveHalfHourPriceNet.textContent = netPricePerSingleHalfHourInPack.toFixed(2);
+                outputs.effectiveHourPrice.textContent = pricePerSingleHourInPack.toFixed(2);
+                outputs.effectiveHalfHourPrice.textContent = pricePerSingleHalfHourInPack.toFixed(2);
+                outputs.effectiveHourPriceNet.textContent = netPricePerSingleHourInPack.toFixed(2);
+                outputs.effectiveHalfHourPriceNet.textContent = netPricePerSingleHalfHourInPack.toFixed(2);
+
+                // SPREMEMBA TUKAJ: Calculate net prices for single sessions
+                const netSingleHourPrice = values.packSingleHourPrice / vatDivisor;
+                const netSingleHalfHourPrice = values.packSingleHalfHourPrice / vatDivisor;
+
+                outputs.singleHourPriceNet.textContent = netSingleHourPrice.toFixed(2);
+                outputs.singleHalfHourPriceNet.textContent = netSingleHalfHourPrice.toFixed(2);
 
 
                 // Revenue calculation (BRUTO)
