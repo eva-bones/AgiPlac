@@ -39,12 +39,28 @@
             <div class="lg:col-span-2">
                 <div class="lg:sticky lg:top-24 card">
                     <div class="sidebar overflow-y-auto pr-2">
-                         <div class="space-y-6">
+                        <div class="space-y-6">
                             <div>
                                 <div class="space-y-4">
                                     <div><label for="packHighSeasonHours" class="block mb-1 slider-label">Skupne plačane ure/teden (Visoka sezona, <span id="packHighSeasonHoursValue">20</span>h)</label><input type="range" min="5" max="60" value="20" class="slider dynamic-slider" id="packHighSeasonHours"></div>
                                     <div><label for="packLowSeasonHours" class="block mb-1 slider-label">Skupne plačane ure/teden (Nizka sezona, <span id="packLowSeasonHoursValue">10</span>h)</label><input type="range" min="5" max="40" value="10" class="slider dynamic-slider" id="packLowSeasonHours"></div>
                                     <div><label for="packRatio" class="block mb-1 slider-label">Delež ur, prodanih v paketih (<span id="packRatioValue">50</span>%)</label><input type="range" min="0" max="100" value="50" class="slider dynamic-slider" id="packRatio"></div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4 pt-4 border-t mt-4">
+                                        <div>
+                                            <label for="vatRate" class="input-label">Stopnja DDV (%)</label>
+                                            <input type="number" id="vatRate" value="9.5" step="0.1" class="dynamic-input">
+                                        </div>
+                                         <div></div>
+                                        <div>
+                                            <label for="highSeasonMonths" class="input-label">Visoka sezona (meseci)</label>
+                                            <input type="number" id="highSeasonMonths" value="6" min="0" max="12" class="dynamic-input">
+                                        </div>
+                                        <div>
+                                            <label for="lowSeasonMonths" class="input-label">Nizka sezona (meseci)</label>
+                                            <input type="number" id="lowSeasonMonths" value="6" min="0" max="12" class="dynamic-input bg-gray-100" disabled>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div>
@@ -55,14 +71,14 @@
                                         <input type="range" min="5" max="20" value="10" class="slider dynamic-slider" id="packHourCount">
                                         <label for="packHourPrice" class="input-label mt-2">Cena paketa</label>
                                         <input type="number" id="packHourPrice" value="250" class="dynamic-input">
-                                        <p class="text-sm text-gray-500 mt-1">Efektivna cena: <span id="effectiveHourPrice" class="font-bold"></span> €/uro</p>
+                                        <p class="text-sm text-gray-500 mt-1">Efektivna cena: <span id="effectiveHourPrice" class="font-bold"></span> €/uro (<span id="effectiveHourPriceNet" class="font-semibold"></span> € neto)</p>
                                     </div>
                                     <div>
                                         <label for="packHalfHourCount" class="block mb-1 slider-label">Št. terminov v paketu (30min) (<span id="packHalfHourCountValue">10</span>)</label>
                                         <input type="range" min="5" max="20" value="10" class="slider dynamic-slider" id="packHalfHourCount">
                                         <label for="packHalfHourPrice" class="input-label mt-2">Cena paketa</label>
                                         <input type="number" id="packHalfHourPrice" value="150" class="dynamic-input">
-                                        <p class="text-sm text-gray-500 mt-1">Efektivna cena: <span id="effectiveHalfHourPrice" class="font-bold"></span> €/termin</p>
+                                        <p class="text-sm text-gray-500 mt-1">Efektivna cena: <span id="effectiveHalfHourPrice" class="font-bold"></span> €/termin (<span id="effectiveHalfHourPriceNet" class="font-semibold"></span> € neto)</p>
                                     </div>
                                 </div>
                                 <h5 class="font-bold mt-4 mb-3 text-center text-gray-700">Posamični termini (€)</h5>
@@ -84,7 +100,7 @@
 
                         <div class="grid md:grid-cols-2 gap-x-8 gap-y-6 mt-6 pt-6 border-t">
                             <div>
-                                 <h5 class="font-bold mb-3 text-center text-gray-700">Začetni stroški (€)</h5>
+                                <h5 class="font-bold mb-3 text-center text-gray-700">Začetni stroški (€)</h5>
                                 <div class="space-y-2" id="staticStartupCosts">
                                     <div><label for="turfCost" class="input-label">Umetna trava (JutaGrass 20x40m)</label><input type="number" id="turfCost" value="8400" class="dynamic-input startup-cost-input"></div>
                                     <div><label for="sandCost" class="input-label">Kremenčev pesek</label><input type="number" id="sandCost" value="1000" class="dynamic-input startup-cost-input"></div>
@@ -94,14 +110,13 @@
                                     </label>
                                     <input type="number" id="obstaclesCost" value="10000" class="dynamic-input startup-cost-input">
                                     </div>
-
                                     <div><label for="restCost" class="input-label">Ostalo</label><input type="number" id="restCost" value="1000" class="dynamic-input startup-cost-input"></div>
                                 </div>
                                 <div id="dynamicStartupCostsContainer" class="space-y-2 mt-2"></div>
                                 <button id="addStartupCostBtn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 w-full text-left">+ Dodaj nov strošek</button>
                             </div>
                             <div>
-                                 <h5 class="font-bold mb-3 text-center text-gray-700">Mesečni stroški (€)</h5>
+                                <h5 class="font-bold mb-3 text-center text-gray-700">Mesečni stroški (€)</h5>
                                 <div class="space-y-2" id="staticMonthlyCosts">
                                     <div><label for="rentCost" class="input-label">Najemnina</label><input type="number" id="rentCost" value="1000" class="dynamic-input monthly-cost-input"></div>
                                     <div><label for="maintenanceCost" class="input-label">Vzdrževanje</label><input type="number" id="maintenanceCost" value="300" class="dynamic-input monthly-cost-input"></div>
@@ -139,11 +154,10 @@
                 
                 <section class="card">
                      <h4 class="text-xl font-semibold mb-4 text-center">Sezonsko</h4>
-                    <div class="chart-container h-96">
+                     <div class="chart-container h-96">
                         <canvas id="profitabilityChart"></canvas>
                     </div>
                 </section>
-
             </div>
         </div>
     </main>
@@ -165,6 +179,9 @@
                 packSingleHourPrice: document.getElementById('packSingleHourPrice'),
                 packSingleHalfHourPrice: document.getElementById('packSingleHalfHourPrice'),
                 investorCount: document.getElementById('investorCount'),
+                highSeasonMonths: document.getElementById('highSeasonMonths'),
+                lowSeasonMonths: document.getElementById('lowSeasonMonths'),
+                vatRate: document.getElementById('vatRate'),
             };
 
             const outputs = {
@@ -175,8 +192,10 @@
                 packHalfHourCountValue: document.getElementById('packHalfHourCountValue'),
                 effectiveHourPrice: document.getElementById('effectiveHourPrice'),
                 effectiveHalfHourPrice: document.getElementById('effectiveHalfHourPrice'),
+                // SPREMEMBA TUKAJ
+                effectiveHourPriceNet: document.getElementById('effectiveHourPriceNet'),
+                effectiveHalfHourPriceNet: document.getElementById('effectiveHalfHourPriceNet'),
                 annualProfit: document.getElementById('annual-profit-right'),
-                // REMOVED: roi: document.getElementById('roi-right'),
                 totalInvestment: document.getElementById('total-investment-right'),
                 investorCountValue: document.getElementById('investorCountValue'),
                 investmentPerInvestor: document.getElementById('investmentPerInvestor'),
@@ -190,32 +209,26 @@
                 const isStartup = type === 'startup';
                 const containerId = isStartup ? 'dynamicStartupCostsContainer' : 'dynamicMonthlyCostsContainer';
                 const container = document.getElementById(containerId);
-                
                 const costClass = `dynamic-input ${isStartup ? 'dynamic-startup-cost' : 'dynamic-monthly-cost'}`;
                 const nameClass = `dynamic-input ${isStartup ? 'dynamic-startup-name' : 'dynamic-monthly-name'}`;
-
                 const newRow = document.createElement('div');
                 newRow.className = 'flex items-center space-x-2';
-
                 const nameInput = document.createElement('input');
                 nameInput.type = 'text';
                 nameInput.placeholder = 'Ime stroška';
                 nameInput.className = `${nameClass} flex-grow`;
                 nameInput.setAttribute('aria-label', 'Ime novega stroška');
                 nameInput.addEventListener('input', calculateFinancials);
-                
                 const valueInput = document.createElement('input');
                 valueInput.type = 'number';
                 valueInput.value = '0';
                 valueInput.className = `${costClass} w-24`;
                 valueInput.setAttribute('aria-label', 'Vrednost novega stroška');
                 valueInput.addEventListener('input', calculateFinancials);
-
                 const removeBtn = document.createElement('button');
                 removeBtn.textContent = '–';
                 removeBtn.className = 'px-2 py-0.5 bg-red-500 text-white rounded hover:bg-red-600 text-lg font-bold flex-shrink-0';
                 removeBtn.onclick = () => { newRow.remove(); calculateFinancials(); };
-
                 newRow.appendChild(nameInput);
                 newRow.appendChild(valueInput);
                 newRow.appendChild(removeBtn);
@@ -233,49 +246,67 @@
 
             function calculateFinancials() {
                 const values = getValues();
+                const vatDivisor = 1 + (values.vatRate / 100);
 
                 // Update slider value displays
                 Object.keys(outputs).forEach(key => {
                     const element = outputs[key];
-                    if (element && element.tagName === 'SPAN') {
+                    if (element && element.tagName === 'SPAN' && !key.startsWith('effective')) {
                         const correspondingInputKey = key.replace('Value', '');
                         if(values[correspondingInputKey] !== undefined) {
                             element.textContent = values[correspondingInputKey];
                         }
                     }
                 });
+                outputs.packHourCountValue.textContent = values.packHourCount;
+                outputs.packHalfHourCountValue.textContent = values.packHalfHourCount;
+                outputs.investorCountValue.textContent = values.investorCount;
 
-                // Calculate total startup cost by querying all relevant inputs
+
+                // Calculate total startup cost
                 let totalStartupCost = 0;
                 document.querySelectorAll('.startup-cost-input, .dynamic-startup-cost').forEach(input => {
                     totalStartupCost += parseFloat(input.value) || 0;
                 });
                 
-                // Calculate total monthly expenses by querying all relevant inputs
+                // Calculate total monthly expenses
                 let totalMonthlyExpenses = 0;
                 document.querySelectorAll('.monthly-cost-input, .dynamic-monthly-cost').forEach(input => {
                     totalMonthlyExpenses += parseFloat(input.value) || 0;
                 });
                 
-                // Calculate effective prices
+                // SPREMEMBA TUKAJ: Calculate effective prices (gross and net)
                 const pricePerSingleHourInPack = values.packHourCount > 0 ? values.packHourPrice / values.packHourCount : 0;
                 const pricePerSingleHalfHourInPack = values.packHalfHourCount > 0 ? values.packHalfHourPrice / values.packHalfHourCount : 0;
-                
+                const netPricePerSingleHourInPack = pricePerSingleHourInPack / vatDivisor;
+                const netPricePerSingleHalfHourInPack = pricePerSingleHalfHourInPack / vatDivisor;
+
                 if(outputs.effectiveHourPrice) outputs.effectiveHourPrice.textContent = pricePerSingleHourInPack.toFixed(2);
                 if(outputs.effectiveHalfHourPrice) outputs.effectiveHalfHourPrice.textContent = pricePerSingleHalfHourInPack.toFixed(2);
+                if(outputs.effectiveHourPriceNet) outputs.effectiveHourPriceNet.textContent = netPricePerSingleHourInPack.toFixed(2);
+                if(outputs.effectiveHalfHourPriceNet) outputs.effectiveHalfHourPriceNet.textContent = netPricePerSingleHalfHourInPack.toFixed(2);
 
-                // Revenue calculation
+
+                // Revenue calculation (BRUTO)
                 const avgPackPricePerHour = (pricePerSingleHourInPack * 0.5) + (pricePerSingleHalfHourInPack * 0.5 * 2);
                 const avgSinglePricePerHour = (values.packSingleHourPrice * 0.5) + (values.packSingleHalfHourPrice * 2 * 0.5);
                 const packRatioDecimal = values.packRatio / 100;
                 const overallAvgRate = (avgPackPricePerHour * packRatioDecimal) + (avgSinglePricePerHour * (1 - packRatioDecimal));
 
-                const highSeasonTotalRevenue = values.packHighSeasonHours * overallAvgRate * 4.33;
-                const lowSeasonTotalRevenue = values.packLowSeasonHours * overallAvgRate * 4.33;
+                const highSeasonGrossRevenue = values.packHighSeasonHours * overallAvgRate * 4.33;
+                const lowSeasonGrossRevenue = values.packLowSeasonHours * overallAvgRate * 4.33;
+
+                // Izračun NETO prihodkov z upoštevanjem DDV
+                const highSeasonNetRevenue = highSeasonGrossRevenue / vatDivisor;
+                const lowSeasonNetRevenue = lowSeasonGrossRevenue / vatDivisor;
                 
-                const highSeasonProfit = highSeasonTotalRevenue - totalMonthlyExpenses;
-                const lowSeasonProfit = lowSeasonTotalRevenue - totalMonthlyExpenses;
-                const annualProfit = (highSeasonProfit * 6) + (lowSeasonProfit * 6);
+                const highSeasonProfit = highSeasonNetRevenue - totalMonthlyExpenses;
+                const lowSeasonProfit = lowSeasonNetRevenue - totalMonthlyExpenses;
+                
+                // Uporaba dinamičnega trajanja sezone
+                const highSeasonMonths = values.highSeasonMonths;
+                const lowSeasonMonths = 12 - highSeasonMonths;
+                const annualProfit = (highSeasonProfit * highSeasonMonths) + (lowSeasonProfit * lowSeasonMonths);
                 
                 // Investor Calculations
                 const investorCount = values.investorCount > 0 ? values.investorCount : 1;
@@ -285,12 +316,11 @@
                 // Update main display cards
                 outputs.totalInvestment.textContent = '€' + totalStartupCost.toLocaleString('sl-SI', { maximumFractionDigits: 0 });
                 outputs.annualProfit.textContent = '€' + annualProfit.toLocaleString('sl-SI', { maximumFractionDigits: 0 });
-                // REMOVED: outputs.roi.textContent = roi.toFixed(1) + '%';
                 outputs.investmentPerInvestor.textContent = '€' + investmentPerInvestor.toLocaleString('sl-SI', { maximumFractionDigits: 0 });
                 outputs.returnPerInvestor.textContent = '€' + returnPerInvestor.toLocaleString('sl-SI', { maximumFractionDigits: 0 });
                 
-                // Update profitability chart
-                updateProfitabilityChart(highSeasonTotalRevenue, lowSeasonTotalRevenue, totalMonthlyExpenses, highSeasonProfit, lowSeasonProfit);
+                // Update profitability chart (z NETO prihodki)
+                updateProfitabilityChart(highSeasonNetRevenue, lowSeasonNetRevenue, totalMonthlyExpenses, highSeasonProfit, lowSeasonProfit);
             }
             
             // --- CHART FUNCTIONS ---
@@ -304,7 +334,7 @@
 
             function createProfitabilityChart() {
                 const ctx = document.getElementById('profitabilityChart').getContext('2d');
-                profitabilityChart = new Chart(ctx, { type: 'bar', data: { labels: ['Visoka Sezona (Povp. Mesec)', 'Nizka Sezona (Povp. Mesec)'], datasets: [{label: 'Prihodki', data: [], backgroundColor: 'rgba(59, 130, 246, 0.7)'},{label: 'Stroški', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)'},{label: 'Dobiček', data: [], backgroundColor: 'rgba(22, 163, 74, 0.7)'}] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: value => '€' + value.toLocaleString('sl-SI') } } }, plugins: { tooltip: { callbacks: { label: context => `${context.dataset.label}: €${context.parsed.y.toLocaleString('sl-SI')}` } } } } });
+                profitabilityChart = new Chart(ctx, { type: 'bar', data: { labels: ['Visoka Sezona (Povp. Mesec)', 'Nizka Sezona (Povp. Mesec)'], datasets: [{label: 'Neto Prihodki', data: [], backgroundColor: 'rgba(59, 130, 246, 0.7)'},{label: 'Stroški', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)'},{label: 'Dobiček', data: [], backgroundColor: 'rgba(22, 163, 74, 0.7)'}] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: value => '€' + value.toLocaleString('sl-SI') } } }, plugins: { tooltip: { callbacks: { label: context => `${context.dataset.label}: €${context.parsed.y.toLocaleString('sl-SI')}` } } } } });
             }
             
             // --- INITIALIZATION ---
@@ -314,6 +344,20 @@
                 input.addEventListener('input', calculateFinancials);
             });
             
+            inputs.highSeasonMonths.addEventListener('input', () => {
+                const highMonths = parseInt(inputs.highSeasonMonths.value, 10);
+                if (highMonths >= 0 && highMonths <= 12) {
+                    inputs.lowSeasonMonths.value = 12 - highMonths;
+                } else if (highMonths > 12) {
+                     inputs.highSeasonMonths.value = 12;
+                     inputs.lowSeasonMonths.value = 0;
+                } else {
+                     inputs.highSeasonMonths.value = 0;
+                     inputs.lowSeasonMonths.value = 12;
+                }
+                calculateFinancials();
+            });
+
             document.getElementById('addStartupCostBtn').addEventListener('click', () => addCostField('startup'));
             document.getElementById('addMonthlyCostBtn').addEventListener('click', () => addCostField('monthly'));
             
